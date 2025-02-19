@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react'
 import Sidebar from './Sidebar'
 import {data, Outlet, useLocation} from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Box } from '@mui/material'
 import io from 'socket.io-client'
+import { setOnlineUser, setSocketConnection } from '../redux/userSlice'
 
 const AfterLogin = () => {
   const location = useLocation()
   const user = useSelector(state => state.user)
+  const dispatch = useDispatch()
 
   const basePath = location.pathname === '/'
-
-  // console.log("basePath13333", basePath);
   
   useEffect(() => {
     const socketConnection = io(import.meta.env.VITE_API_URL, {
@@ -22,9 +22,16 @@ const AfterLogin = () => {
 
     socketConnection.on('onlineUser', (data) => {
       console.log('Online user:', data)
+      dispatch(setOnlineUser(data))
     })
 
+    console.log("socketConnection", socketConnection);
+    
+
+    dispatch(setSocketConnection(socketConnection))
+
     return () => {
+
       socketConnection.disconnect()
     }
   },[])

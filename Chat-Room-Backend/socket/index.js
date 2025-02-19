@@ -21,15 +21,15 @@ io.on("connection", async (socket) => {
 
   const token = socket.handshake.auth.token;
 
-  const user = await getUserDetailsFromToken(token);
+  const user = await getUserDetailsFromToken(token);  
 
   socket.join(user?._id);
-  onlineUser.add(user?._id);
+  onlineUser.add(user?._id?.toString());
 
   io.emit("onlineUser", Array.from(onlineUser));
 
   socket.on("disconnect", () => {
-    onlineUser.delete(user?._id);
+    onlineUser.delete(user?._id); 
     console.log("User disconnected", socket.id);
   });
 });

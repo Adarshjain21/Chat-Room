@@ -119,7 +119,7 @@ const Sidebar = ({ user, setPersonId }) => {
                 top: "25px",
                 bottom: "25px",
                 left: "25px",
-                width: "auto",
+                // width: "auto",
                 borderRadius: "10px",
                 width: "500px",
                 maxWidth: "calc(100% - 30px)",
