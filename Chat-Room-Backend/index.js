@@ -4,14 +4,15 @@ import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
+import {app, server} from "./socket/index.js"
 dotenv.config();
 
-const app = express();
+// const app = express();
 
 app.use(
   cors({
-    credentials: true,
     origin: process.env.FRONTEND_URL,
+    credentials: true,
   })
 );
 app.use(express.json());
@@ -28,7 +29,7 @@ app.get("/", (request, response) => {
 app.use("/api", router);
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 });

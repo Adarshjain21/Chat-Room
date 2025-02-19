@@ -63,7 +63,7 @@ export async function loginUser(request, response) {
       message: "User logged in successfully",
       error: false,
       success: true,
-      data: token,
+      token: token,
     });
   } catch (error) {
     return response.status(500).json({
