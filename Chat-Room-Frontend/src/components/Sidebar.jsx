@@ -22,6 +22,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 import DropDownMenu from "./DropDownMenu";
+import { NavLink } from "react-router-dom";
 
 // Styled Components
 const SearchInput = styled(InputBase)({
@@ -53,7 +54,7 @@ const ScrollableBox = styled(Box)({
   },
 });
 
-const Sidebar = ({ user, setPersonId }) => {
+const Sidebar = ({ user, socket }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
   const [allUser, setAllUser] = useState([]);
@@ -62,6 +63,39 @@ const Sidebar = ({ user, setPersonId }) => {
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("sidebar", user._id);
+
+      socket.on("conversation", (data) => {
+        console.log("conversation", data);
+
+        const conversationUserData = data.map((conversationUser, index) => {
+          if (
+            conversationUser?.sender?._id === conversationUser?.receiver?._id
+          ) {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser?.sender,
+            };
+          } else if (conversationUser?.receiver?._id !== user?._id) {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser.receiver,
+            };
+          } else {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser.sender,
+            };
+          }
+        });
+
+        setAllUser(conversationUserData);
+      });
+    }
+  }, [socket, user]);
 
   // const fetchFriends = async () => {
   //   try {
@@ -132,10 +166,12 @@ const Sidebar = ({ user, setPersonId }) => {
         </div>
 
         <div className="flex justify-center items-center">
-        <div>
-          <SearchUser />
-        </div>
-        <div><DropDownMenu /></div>
+          <div>
+            <SearchUser />
+          </div>
+          <div>
+            <DropDownMenu />
+          </div>
         </div>
       </div>
 
@@ -170,11 +206,18 @@ const Sidebar = ({ user, setPersonId }) => {
       <ScrollableBox>
         <List>
           {allUser.map((conv, index) => {
+            console.log("conv", conv);
+
             return (
+              <>
               <NavLink
                 to={"/" + conv?.userDetails?._id}
                 key={conv?._id}
-                className="flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 py-3 px-2 border border-transparent rounded hover:bg-slate-100 cursor-pointer ${
+                    isActive ? "bg-slate-100" : ""
+                  }`
+                }
               >
                 <div>
                   <Avatar
@@ -184,10 +227,21 @@ const Sidebar = ({ user, setPersonId }) => {
                     height={40}
                   />
                 </div>
-                <div>
-                  <h3 className="text-ellipsis line-clamp-1 font-semibold text-base">
-                    {conv?.userDetails?.name}
-                  </h3>
+                <div className="w-full">
+                  <div className="text-ellipsis line-clamp-1 font-semibold text-base w-full flex justify-between items-center">
+                    <div>
+                      {conv?.userDetails?.firstname}{" "}
+                      {conv?.userDetails?.lastname} (
+                      {conv?.userDetails?.username})
+                    </div>
+                    <div>
+                      {" "}
+                      {new Date(conv?.lastMsg?.createdAt).toLocaleTimeString(
+                        "en-GB",
+                        { hour: "2-digit", minute: "2-digit" }
+                      )}
+                    </div>
+                  </div>
                   <div className="text-slate-500 text-xs flex items-center gap-1">
                     <div className="flex items-center gap-1">
                       {conv?.lastMsg?.imageUrl && (
@@ -207,25 +261,26 @@ const Sidebar = ({ user, setPersonId }) => {
                         </div>
                       )}
                     </div>
-                    <p className="text-ellipsis line-clamp-1">
+                    <div className="flex justify-between items-center w-full">
+                    <p className="text-ellipsis line-clamp-1 text-[15px]">
                       {conv?.lastMsg?.text}
                     </p>
+                    {Boolean(conv?.unseenMsg) && (
+                      <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-green-600 text-white font-semibold rounded-full">
+                        {conv?.unseenMsg}
+                      </p>
+                    )}
+                    </div>
                   </div>
                 </div>
-                {Boolean(conv?.unseenMsg) && (
-                  <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
-                    {conv?.unseenMsg}
-                  </p>
-                )}
               </NavLink>
+              <div className="border-1 border-slate-200">
+              </div>
+              </>
             );
           })}
         </List>
       </ScrollableBox>
-
-      {/* {openSearchUser && (
-        <SearchUser onClose={() => setOpenSearchUser(false)} />
-      )} */}
     </Box>
   );
 };

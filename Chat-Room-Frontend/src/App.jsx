@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -9,12 +9,22 @@ import fetchUserDetails from "./utils/fetchUserDetails";
 
 function App() {
   const dispatch = useDispatch();
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
+  const location = useLocation();
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails();
+    console.log("userData", userData.data);
+    
     dispatch(setUser(userData.data));
   };
+
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  }, []);
+
 
   // const fetchUserDetails = async()=>{
   //         try {

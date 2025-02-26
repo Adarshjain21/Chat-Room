@@ -33,12 +33,9 @@ const userSlice = createSlice({
     setOnlineUser : (state,action)=>{
       state.onlineUser = action.payload
     },
-    setSocketConnection : (state,action)=>{
-      state.socketConnection = action.payload
-    }
   },
 });
 
-export const { setUser, setToken, logout, setOnlineUser, setSocketConnection } = userSlice.actions;
+export const { setUser, setToken, logout, setOnlineUser } = userSlice.actions;
 
 export default userSlice.reducer;

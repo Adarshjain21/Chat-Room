@@ -3,16 +3,14 @@ import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 import { FaUserPlus } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import Loading from "./Loading";
 import UserSearchCard from "./UserSearchCard";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const BootstrapDialog = styled(Dialog)({
     "& .MuiPaper-root": {

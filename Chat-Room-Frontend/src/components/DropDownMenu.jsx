@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { Button, Drawer, Menu, MenuItem } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "../redux/userSlice";
 import MoreIcon from "@mui/icons-material/More";
-import axios from 'axios';
+import axios from "axios";
 
 const DropDownMenu = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -25,8 +24,8 @@ const DropDownMenu = () => {
 
   const handleLogout = async () => {
     try {
-        const URL = `${import.meta.env.VITE_API_URL}/api/logout`
-      const response = await axios(URL)
+      const URL = `${import.meta.env.VITE_API_URL}/api/logout`;
+      const response = await axios(URL);
       if (response.data.success) {
         dispatch(logout());
         localStorage.clear();
@@ -64,7 +63,7 @@ const DropDownMenu = () => {
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>
-  )
-}
+  );
+};
 
-export default DropDownMenu
+export default DropDownMenu;
