@@ -11,6 +11,7 @@ const AfterLogin = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
+  const onlineUser = useSelector((state) => state.user.onlineUser);
 
   const basePath = location.pathname === "/";
 
@@ -30,10 +31,14 @@ const AfterLogin = () => {
     setSocket(socketConnection);
     // dispatch(setSocketConnection(socketConnection))
 
+    socketConnection.on("userDisconnected", (data) => {
+      dispatch(setOnlineUser(data));
+    });
+    
     return () => {
       socketConnection.disconnect();
     };
-  }, []);
+  }, [dispatch]);
 
   const context = {
     socket: socket,

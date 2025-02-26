@@ -8,8 +8,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText,
-  Avatar,
+  ListItemText,  
   Divider,
   styled,
   Drawer,
@@ -23,6 +22,7 @@ import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 import DropDownMenu from "./DropDownMenu";
 import { NavLink } from "react-router-dom";
+import Avatar from "./Avatar";
 
 // Styled Components
 const SearchInput = styled(InputBase)({
@@ -219,12 +219,13 @@ const Sidebar = ({ user, socket }) => {
                   }`
                 }
               >
-                <div>
+                <div className="mr-2">
                   <Avatar
-                    imageUrl={conv?.userDetails?.profile_pic}
-                    name={conv?.userDetails?.name}
+                    imageUrl={conv?.userDetails?.avatar}
+                    name={conv?.userDetails?.username}
                     width={40}
                     height={40}
+                    userId={conv?.userDetails?._id}
                   />
                 </div>
                 <div className="w-full">
