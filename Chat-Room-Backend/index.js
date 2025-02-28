@@ -11,8 +11,8 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
+    origin: "*", // Allow all origins
+    credentials: true, // If you use cookies, set this to false when origin is "*"
   })
 );
 app.use(express.json());
