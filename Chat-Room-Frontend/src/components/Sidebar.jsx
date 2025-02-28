@@ -8,7 +8,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText,  
+  ListItemText,
   Divider,
   styled,
   Drawer,
@@ -21,8 +21,13 @@ import { FaUserPlus } from "react-icons/fa";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 import DropDownMenu from "./DropDownMenu";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
+import { IoIosLogOut } from "react-icons/io";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { logout } from "../redux/userSlice";
+import { MdLogout } from "react-icons/md";
 
 // Styled Components
 const SearchInput = styled(InputBase)({
@@ -59,7 +64,131 @@ const Sidebar = ({ user, socket }) => {
   const dispatch = useDispatch();
   const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
+  const navigate = useNavigate()
 
+  // const allUser = [
+  //   {
+  //     userDetails: {
+  //       _id: 1,
+  //       firstname: "John",
+  //       lastname: "Doe",
+  //       username: "John",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 2,
+  //       firstname: "Jane",
+  //       lastname: "Smith",
+  //       username: "Jane",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 3,
+  //       firstname: "Michael",
+  //       lastname: "Johnson",
+  //       username: "Michael",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 4,
+  //       firstname: "Sarah",
+  //       lastname: "Williams",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 5,
+  //       firstname: "David",
+  //       lastname: "Brown",
+  //       username: "David",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 6,
+  //       firstname: "Michael",
+  //       lastname: "Davis",
+  //       username: "Michael",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 7,
+  //       firstname: "Sarah",
+  //       lastname: "Miller",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 8,
+  //       firstname: "David",
+  //       lastname: "Garcia",
+  //       username: "David",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 9,
+  //       firstname: "Michael",
+  //       lastname: "Rodriguez",
+  //       username: "Michael",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 10,
+  //       firstname: "Sarah",
+  //       lastname: "Wilson",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 11,
+  //       firstname: "Sarah",
+  //       lastname: "Anderson",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 12,
+  //       firstname: "Michael",
+  //       lastname: "Thompson",
+  //       username: "Michael",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 13,
+  //       firstname: "Sarah",
+  //       lastname: "Martinez",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 14,
+  //       firstname: "Sarah",
+  //       lastname: "Jackson",
+  //       username: "Sarah",
+  //     }
+  //   },
+  //   {
+  //     userDetails: {
+  //       _id: 15,
+  //       firstname: "Sarah",
+  //       lastname: "White",
+  //       username: "Sarah",
+  //     }
+  //   }
+
+  // ]
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
@@ -120,6 +249,21 @@ const Sidebar = ({ user, socket }) => {
   //   fetchFriends();
   // }, []);
 
+  const handleLogout = async () => {
+    try {
+      const URL = `${import.meta.env.VITE_API_URL}/api/logout`;
+      const response = await axios(URL);
+      if (response.data.success) {
+        dispatch(logout());
+        localStorage.clear();
+        toast.success(response.data.message);
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.message || error);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -140,7 +284,7 @@ const Sidebar = ({ user, socket }) => {
                 user?.avatar ||
                 "https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369988.png"
               }
-              className="h-12 border rounded-full ml-[10px] mt-[10px]"
+              className="h-12 w-12 border rounded-full ml-[10px] mt-[10px]"
               alt="User Avatar"
             />
           </Button>
@@ -161,7 +305,7 @@ const Sidebar = ({ user, socket }) => {
               },
             }}
           >
-            <Profile user={user} />
+            <Profile user={user} socket={socket}/>
           </Drawer>
         </div>
 
@@ -169,14 +313,14 @@ const Sidebar = ({ user, socket }) => {
           <div>
             <SearchUser />
           </div>
-          <div>
-            <DropDownMenu />
+          <div className="text-blue-800 mx-4 cursor-pointer" onClick={handleLogout}>
+          <MdLogout size={22}/>
           </div>
         </div>
       </div>
 
       {/* Search Bar */}
-      <Box sx={{ px: 2, pb: 2 }}>
+      <Box sx={{ px: 2, pb: 0.5 }}>
         <Box
           sx={{
             display: "flex",
@@ -210,73 +354,72 @@ const Sidebar = ({ user, socket }) => {
 
             return (
               <>
-              <NavLink
-                to={"/" + conv?.userDetails?._id}
-                key={conv?._id}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 py-3 px-2 border border-transparent rounded hover:bg-slate-100 cursor-pointer ${
-                    isActive ? "bg-slate-100" : ""
-                  }`
-                }
-              >
-                <div className="mr-2">
-                  <Avatar
-                    imageUrl={conv?.userDetails?.avatar}
-                    name={conv?.userDetails?.username}
-                    width={40}
-                    height={40}
-                    userId={conv?.userDetails?._id}
-                  />
-                </div>
-                <div className="w-full">
-                  <div className="text-ellipsis line-clamp-1 font-semibold text-base w-full flex justify-between items-center">
-                    <div>
-                      {conv?.userDetails?.firstname}{" "}
-                      {conv?.userDetails?.lastname} (
-                      {conv?.userDetails?.username})
+                <NavLink
+                  to={"/" + conv?.userDetails?._id}
+                  key={conv?._id}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 py-3 px-2 border border-transparent rounded hover:bg-slate-100 cursor-pointer ${
+                      isActive ? "bg-slate-100" : ""
+                    }`
+                  }
+                >
+                  <div className="mr-2">
+                    <Avatar
+                      imageUrl={conv?.userDetails?.avatar}
+                      name={conv?.userDetails?.username}
+                      width={40}
+                      height={40}
+                      userId={conv?.userDetails?._id}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <div className="text-ellipsis line-clamp-1 font-semibold text-base w-full flex justify-between items-center">
+                      <div>
+                        {conv?.userDetails?.firstname}{" "}
+                        {conv?.userDetails?.lastname} (@
+                        {conv?.userDetails?.username})
+                      </div>
+                      <div>
+                        {" "}
+                        {new Date(conv?.lastMsg?.createdAt).toLocaleTimeString(
+                          "en-GB",
+                          { hour: "2-digit", minute: "2-digit" }
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      {" "}
-                      {new Date(conv?.lastMsg?.createdAt).toLocaleTimeString(
-                        "en-GB",
-                        { hour: "2-digit", minute: "2-digit" }
-                      )}
+                    <div className="text-slate-500 text-xs flex items-center gap-1">
+                      <div className="flex items-center gap-1">
+                        {conv?.lastMsg?.imageUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaImage />
+                            </span>
+                            {!conv?.lastMsg?.text && <span>Image</span>}
+                          </div>
+                        )}
+                        {conv?.lastMsg?.videoUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaVideo />
+                            </span>
+                            {!conv?.lastMsg?.text && <span>Video</span>}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center w-full">
+                        <p className="text-ellipsis line-clamp-1 text-[15px]">
+                          {conv?.lastMsg?.text}
+                        </p>
+                        {Boolean(conv?.unseenMsg) && (
+                          <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-green-600 text-white font-semibold rounded-full">
+                            {conv?.unseenMsg}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <div className="flex items-center gap-1">
-                      {conv?.lastMsg?.imageUrl && (
-                        <div className="flex items-center gap-1">
-                          <span>
-                            <FaImage />
-                          </span>
-                          {!conv?.lastMsg?.text && <span>Image</span>}
-                        </div>
-                      )}
-                      {conv?.lastMsg?.videoUrl && (
-                        <div className="flex items-center gap-1">
-                          <span>
-                            <FaVideo />
-                          </span>
-                          {!conv?.lastMsg?.text && <span>Video</span>}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex justify-between items-center w-full">
-                    <p className="text-ellipsis line-clamp-1 text-[15px]">
-                      {conv?.lastMsg?.text}
-                    </p>
-                    {Boolean(conv?.unseenMsg) && (
-                      <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-green-600 text-white font-semibold rounded-full">
-                        {conv?.unseenMsg}
-                      </p>
-                    )}
-                    </div>
-                  </div>
-                </div>
-              </NavLink>
-              <div className="border-1 border-slate-200">
-              </div>
+                </NavLink>
+                <div className="border-1 border-slate-200"></div>
               </>
             );
           })}

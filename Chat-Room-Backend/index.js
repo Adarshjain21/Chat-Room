@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
-import {app, server} from "./socket/index.js"
+import {app, server, io} from "./socket/index.js"
 dotenv.config();
 
 // const app = express();
@@ -17,6 +17,10 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 const PORT = process.env.PORT || 8080;
 

@@ -16,9 +16,9 @@ const UserSearchCard = ({user, onClose}) => {
         </div>
         <div>
             <div className='font-semibold text-ellipsis line-clamp-1'>
-                {user?.name}
+                {user?.firstname} {user?.lastname}
             </div>
-            <p className='text-sm text-ellipsis line-clamp-1'>{user?.username}</p>
+            <p className='text-sm text-ellipsis line-clamp-1'>@{user?.username}</p>
         </div>
     </Link>
   )

@@ -33,9 +33,12 @@ const userSlice = createSlice({
     setOnlineUser : (state,action)=>{
       state.onlineUser = action.payload
     },
+    updatedAvatar: (state, action) => {
+      state.avatar = action.payload; // ✅ Updates the avatar correctly
+    }
   },
 });
 
-export const { setUser, setToken, logout, setOnlineUser } = userSlice.actions;
+export const { setUser, setToken, logout, setOnlineUser, updatedAvatar } = userSlice.actions;
 
 export default userSlice.reducer;
