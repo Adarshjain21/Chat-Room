@@ -97,7 +97,7 @@ const AfterLogin = () => {
           >
             <div className="relative flex flex-col items-center">
               <img
-                src="/src/assets/chat-room-logo.png"
+                src="/assets/chat-room-logo.png"
                 alt="Chat Room Preview"
                 className="w-96 rounded-lg shadow-lg border border-gray-700"
               />

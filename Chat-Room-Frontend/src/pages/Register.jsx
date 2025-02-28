@@ -126,7 +126,7 @@ const Register = () => {
 
       <Link to="/" className="absolute top-6 left-6">
         <img
-          src="/src/assets/chat-room-logo.png"
+          src="/assets/chat-room-logo.png"
           alt="logo"
           className="w-36 sm:w-48"
         />
