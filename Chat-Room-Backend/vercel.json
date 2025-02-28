@@ -1,6 +1,6 @@
 {
     "version" : 2,
-    "name" : "Quick Commerce",
+    "name" : "Chat Room",
     "builds" : [
         {
             "src" : "./index.js",
