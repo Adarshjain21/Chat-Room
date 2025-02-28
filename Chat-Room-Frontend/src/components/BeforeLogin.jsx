@@ -8,7 +8,7 @@ const BeforeLogin = () => {
         <div className="flex justify-between items-center gap-3">
           <Link to={"/"}>
             <img
-              src="/public/assets/chat-room-logo.png"
+              src="/assets/chat-room-logo.png"
               alt="logo"
               className="w-36 sm:w-48 "
             />
@@ -52,7 +52,7 @@ const BeforeLogin = () => {
 
           <div className="lg:w-[50%]">
             <img
-              src="/public/assets/home-hero-image.png"
+              src="/assets/home-hero-image.png"
               alt="Home Banner"
               className="sm:min-w-[350px]"
             />
