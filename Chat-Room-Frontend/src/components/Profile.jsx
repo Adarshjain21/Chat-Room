@@ -4,6 +4,16 @@ import axios from "axios";
 import { setUser, updatedAvatar } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
 import fetchUserDetails from "../utils/fetchUserDetails";
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+
+function CircularSize() {
+  return (
+    <button className="cursor-not-allowed" disabled>
+      <CircularProgress size={18}  />
+    </button>
+  );
+}
 
 const Profile = ({ user, socket }) => {
   const [name, setName] = useState(user.firstname + " " + user.lastname);
@@ -42,20 +52,19 @@ const Profile = ({ user, socket }) => {
       const { data: responseData } = response;
       dispatch(updatedAvatar(responseData.data.avatar));
       fetchUser();
-      
     } catch (error) {
       AxiosToastError(error);
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     // Listen for avatar updates from other users
     socket.on("avatarUpdated", ({ userId, avatar }) => {
       if (userId === user._id) {
         console.log("avatarUpdated58", avatar);
-        
+
         dispatch(updatedAvatar(avatar));
       }
     });
@@ -79,9 +88,14 @@ const Profile = ({ user, socket }) => {
         )}
         <div className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors cursor-pointer">
           <form onSubmit={(e) => e.preventDefault()}>
-            <label htmlFor="avatar">
-              <Camera className="w-6 h-6 text-gray-600 cursor-pointer" />
-            </label>
+            {loading ? (
+              <CircularSize />
+            ) : (
+              <label htmlFor="avatar">
+                <Camera className="w-6 h-6 text-gray-600 cursor-pointer" />
+              </label>
+            )}
+            {/* <Camera className="w-6 h-6 text-gray-600 cursor-pointer" /> */}
             <input
               type="file"
               id="avatar"

@@ -4,6 +4,7 @@ export async function logout(request, response) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      path: "/",
     };
 
     response.clearCookie("token", cookiesOption);
