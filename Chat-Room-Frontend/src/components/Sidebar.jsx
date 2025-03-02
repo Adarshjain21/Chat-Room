@@ -66,129 +66,6 @@ const Sidebar = ({ user, socket }) => {
   const [openSearchUser, setOpenSearchUser] = useState(false);
   const navigate = useNavigate()
 
-  // const allUser = [
-  //   {
-  //     userDetails: {
-  //       _id: 1,
-  //       firstname: "John",
-  //       lastname: "Doe",
-  //       username: "John",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 2,
-  //       firstname: "Jane",
-  //       lastname: "Smith",
-  //       username: "Jane",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 3,
-  //       firstname: "Michael",
-  //       lastname: "Johnson",
-  //       username: "Michael",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 4,
-  //       firstname: "Sarah",
-  //       lastname: "Williams",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 5,
-  //       firstname: "David",
-  //       lastname: "Brown",
-  //       username: "David",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 6,
-  //       firstname: "Michael",
-  //       lastname: "Davis",
-  //       username: "Michael",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 7,
-  //       firstname: "Sarah",
-  //       lastname: "Miller",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 8,
-  //       firstname: "David",
-  //       lastname: "Garcia",
-  //       username: "David",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 9,
-  //       firstname: "Michael",
-  //       lastname: "Rodriguez",
-  //       username: "Michael",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 10,
-  //       firstname: "Sarah",
-  //       lastname: "Wilson",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 11,
-  //       firstname: "Sarah",
-  //       lastname: "Anderson",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 12,
-  //       firstname: "Michael",
-  //       lastname: "Thompson",
-  //       username: "Michael",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 13,
-  //       firstname: "Sarah",
-  //       lastname: "Martinez",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 14,
-  //       firstname: "Sarah",
-  //       lastname: "Jackson",
-  //       username: "Sarah",
-  //     }
-  //   },
-  //   {
-  //     userDetails: {
-  //       _id: 15,
-  //       firstname: "Sarah",
-  //       lastname: "White",
-  //       username: "Sarah",
-  //     }
-  //   }
-
-  // ]
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
@@ -226,44 +103,45 @@ const Sidebar = ({ user, socket }) => {
     }
   }, [socket, user]);
 
-  // const fetchFriends = async () => {
+  // const handleLogout = async () => {
   //   try {
-  //     const response = await Axios({
-  //       ...SummaryApi.getFriends,
-  //     });
-
-  //     const { data: responseData } = response;
-
-  //     console.log(90000000, responseData);
-
-  //     if (responseData.success) {
-  //       // setFriends(responseData.data);
-  //       dispatch(setAllFriends(responseData.data));
+  //     const URL = `${import.meta.env.VITE_API_URL}/api/logout`;
+  //     const response = await axios(URL);
+  //     if (response.data.success) {
+  //       dispatch(logout());
+  //       localStorage.clear();
+  //       toast.success(response.data.message);
+  //       navigate("/");
   //     }
   //   } catch (error) {
-  //     AxiosToastError(error);
+  //     toast.error(error.message || error);
   //   }
   // };
-
-  // useEffect(() => {
-  //   fetchFriends();
-  // }, []);
 
   const handleLogout = async () => {
     try {
       const URL = `${import.meta.env.VITE_API_URL}/api/logout`;
-      const response = await axios(URL);
+      
+      // Call logout API to clear cookies from the server
+      const response = await axios.get(URL, { withCredentials: true });
+  
       if (response.data.success) {
+        // Clear all cookies (Only works for non-HttpOnly cookies)
+        document.cookie.split(";").forEach((cookie) => {
+          const [name] = cookie.split("=");
+          document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        });
+  
+        // Clear local storage and navigate
         dispatch(logout());
         localStorage.clear();
         toast.success(response.data.message);
         navigate("/");
       }
     } catch (error) {
-      toast.error(error.message || error);
+      toast.error(error.response?.data?.message || error.message || "Logout failed");
     }
   };
-
   return (
     <Box
       sx={{
