@@ -229,7 +229,7 @@ const Register = () => {
               <div className="flex justify-center items-center gap-2">
                 <span>Register</span>
                 <img
-                  src="../public/assets/loading-unscreen.gif"
+                  src="/assets/loading-unscreen.gif"
                   alt=""
                   width={20}
                   className=""
