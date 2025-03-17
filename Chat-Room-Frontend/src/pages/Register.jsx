@@ -38,6 +38,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -62,6 +63,7 @@ const Register = () => {
     const URL = `${import.meta.env.VITE_API_URL}/api/register`;
 
     try {
+      setLoading(true);
       const response = await axios.post(URL, data);
 
       const { data: responseData } = response;
@@ -76,10 +78,13 @@ const Register = () => {
           password: "",
           confirmPassword: "",
         });
+        setLoading(false);
         navigate("/login");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -220,7 +225,19 @@ const Register = () => {
             fullWidth
             className="mt-6"
           >
-            Register
+            {loading ? (
+              <div className="flex justify-center items-center gap-2">
+                <span>Register</span>
+                <img
+                  src="../public/assets/loading-unscreen.gif"
+                  alt=""
+                  width={20}
+                  className=""
+                />
+              </div>
+            ) : (
+              <div>Register</div>
+            )}
           </Button>
         </form>
         <p className="mt-4 text-gray-600">

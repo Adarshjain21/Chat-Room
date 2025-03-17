@@ -33,7 +33,8 @@ const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -83,13 +84,14 @@ const Login = () => {
     const URL = `${import.meta.env.VITE_API_URL}/api/login`;
 
     try {
+      setLoading(true);
       const response = await axios.post(URL, data, { withCredentials: true });
 
       const { data: responseData } = response;
 
       if (responseData.success) {
         toast.success(responseData.message);
-        dispatch(setToken(responseData.token))
+        dispatch(setToken(responseData.token));
         localStorage.setItem("token", responseData.token);
 
         const userDetails = await fetchUserDetails();
@@ -99,10 +101,13 @@ const Login = () => {
           email: "",
           password: "",
         });
+        setLoading(false);
         navigate("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -215,7 +220,19 @@ const Login = () => {
             fullWidth
             className="mt-6"
           >
-            Login
+            {loading ? (
+              <div className="flex justify-center items-center gap-2">
+                <span>Login</span>
+                <img
+                  src="../public/assets/loading-unscreen.gif"
+                  alt=""
+                  width={20}
+                  className=""
+                />
+              </div>
+            ) : (
+              <div>Login</div>
+            )}
           </Button>
         </form>
         <p className="mt-4 text-gray-600">
